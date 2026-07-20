@@ -8,6 +8,8 @@
       name="description"
       content="Trackam is an open-source, WakaTime-compatible coding time tracker built for African developers. Unlimited history, self-hostable, and free."
     />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -88,8 +90,11 @@
 
     <!-- ============ NAV ============ -->
     <header class="sticky top-0 z-30 border-b-[3px] border-ink bg-white/90 backdrop-blur">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="/" class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2 wiggle">Trackam</a>
+      <div class="w-full px-8 h-16 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2.5 wiggle">
+          <img src="/assets/trackam-icon-black.png" alt="Trackam logo" class="w-10 h-10 border-[3px] border-ink rounded-xl shadow-hardsm" />
+          <span class="font-display font-extrabold text-2xl">Trackam</span>
+        </a>
         <nav class="hidden md:flex items-center gap-7 text-sm font-bold">
           <a href="#features" class="hover:text-violet">Features</a>
           <a href="#how" class="hover:text-violet">How it works</a>
@@ -109,7 +114,7 @@
 
     <main class="relative z-10">
       <!-- ============ HERO ============ -->
-      <section class="max-w-5xl mx-auto px-4 pt-16 pb-10 text-center">
+      <section class="w-full px-8 pt-10 pb-8 text-center">
         <span class="inline-block bg-lavender border-[3px] border-ink rounded-full px-4 py-1.5 text-sm font-bold shadow-hardsm -rotate-1">
           🌍 Open source · WakaTime-compatible
         </span>
@@ -157,7 +162,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ FIRST-CLASS DX ============ -->
-      <section id="features" class="max-w-6xl mx-auto px-4 py-16">
+      <section id="features" class="w-full px-8 py-16">
         <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">
           First-class<br /><span class="text-violet">developer experience</span>
         </h2>
@@ -193,7 +198,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ IT JUST WORKS (flow) ============ -->
-      <section id="how" class="max-w-6xl mx-auto px-4 py-16 text-center">
+      <section id="how" class="w-full px-8 py-16 text-center">
         <h2 class="font-display font-extrabold text-4xl sm:text-5xl">It just <span class="bg-yellow border-[3px] border-ink shadow-hard rounded-xl px-2 inline-block rotate-1">works</span></h2>
         <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">From keystroke to dashboard in milliseconds. No config, no fuss.</p>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-12">
@@ -221,7 +226,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ YOUR DATA, YOUR HISTORY ============ -->
-      <section class="max-w-6xl mx-auto px-4 py-16">
+      <section class="w-full px-8 py-16">
         <div class="grid md:grid-cols-2 gap-10 items-center">
           <div>
             <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">Your data,<br />your <span class="text-pink">history</span>.</h2>
@@ -255,7 +260,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ TRACK EVERY DETAIL ============ -->
-      <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+      <section class="w-full px-8 py-16 text-center">
         <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Track <span class="text-violet">every</span> detail</h2>
         <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">
           Trackam breaks your time down every way that matters.
@@ -269,7 +274,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ EVERY EDITOR (mirror "any protocol") ============ -->
-      <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+      <section class="w-full px-8 py-16 text-center">
         <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Every editor,<br /><span class="text-ink/40">every language.</span></h2>
         <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">
           If it has a WakaTime plugin, Trackam works with it. That's 50+ editors and hundreds of languages.
@@ -294,7 +299,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ PRICING ============ -->
-      <section id="pricing" class="max-w-6xl mx-auto px-4 py-16 text-center">
+      <section id="pricing" class="w-full px-8 py-16 text-center">
         <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Simple, honest <span class="text-pink">pricing</span></h2>
         <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">Spoiler: the important number is zero.</p>
         <div class="grid md:grid-cols-2 gap-6 mt-12 max-w-3xl mx-auto text-left">
@@ -324,7 +329,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ OPEN SOURCE ============ -->
-      <section id="opensource" class="max-w-6xl mx-auto px-4 py-16">
+      <section id="opensource" class="w-full px-8 py-16">
         <div class="bg-violet text-white border-[3px] border-ink rounded-3xl shadow-hardxl p-8 sm:p-12">
           <div class="grid md:grid-cols-2 gap-10 items-center">
             <div>
@@ -350,7 +355,7 @@ api_key = <span class="text-violet">••••••••-••••-••
       </section>
 
       <!-- ============ FINAL CTA ============ -->
-      <section class="max-w-5xl mx-auto px-4 py-20 text-center">
+      <section class="w-full px-8 py-20 text-center">
         <h2 class="font-display font-extrabold text-4xl sm:text-6xl leading-none">Ready to see<br />where your hours go?</h2>
         <a href="/app" class="press inline-block mt-9 bg-pink text-white border-[3px] border-ink shadow-hardxl font-display font-extrabold text-xl px-12 py-5 rounded-2xl">
           Try it →
@@ -361,9 +366,12 @@ api_key = <span class="text-violet">••••••••-••••-••
 
     <!-- ============ FOOTER ============ -->
     <footer class="border-t-[3px] border-ink bg-white relative z-10">
-      <div class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-5 gap-8">
+      <div class="w-full px-8 py-12 grid grid-cols-2 md:grid-cols-5 gap-8">
         <div class="col-span-2">
-          <span class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2 inline-block">Trackam</span>
+          <div class="flex items-center gap-2.5">
+            <img src="/assets/trackam-icon-black.png" alt="Trackam logo" class="w-10 h-10 border-[3px] border-ink rounded-xl shadow-hardsm" />
+            <span class="font-display font-extrabold text-2xl">Trackam</span>
+          </div>
           <p class="text-ink/60 font-medium mt-4 max-w-xs">Open-source coding time tracking, built for African developers. 🌍</p>
         </div>
         <div>
@@ -392,7 +400,7 @@ api_key = <span class="text-violet">••••••••-••••-••
         </div>
       </div>
       <div class="border-t border-grey">
-        <p class="max-w-6xl mx-auto px-4 py-5 text-xs font-semibold text-ink/40">© 2026 Trackam · self-hosted, WakaTime-compatible coding time tracking</p>
+        <p class="w-full px-8 py-5 text-xs font-semibold text-ink/40">© 2026 Trackam · self-hosted, WakaTime-compatible coding time tracking</p>
       </div>
     </footer>
 

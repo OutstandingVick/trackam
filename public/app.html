@@ -8,6 +8,8 @@
       name="description"
       content="An affordable, WakaTime-compatible coding time tracker built for African developers."
     />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -94,8 +96,9 @@
     <div id="auth-view" class="hidden relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
       <div class="w-full max-w-md">
         <div class="text-center mb-8">
-          <div class="inline-block bg-pink text-white border-[3px] border-ink shadow-hard px-5 py-2 rounded-full -rotate-2 wiggle">
-            <span class="font-display font-extrabold text-2xl tracking-tight">Trackam</span>
+          <div class="inline-flex items-center gap-3 wiggle">
+            <img src="/assets/trackam-icon-black.png" alt="Trackam logo" class="w-14 h-14 border-[3px] border-ink rounded-2xl shadow-hard" />
+            <span class="font-display font-extrabold text-4xl tracking-tight">Trackam</span>
           </div>
           <p class="mt-5 text-lg font-medium">
             Track your coding grind. <span class="whitespace-nowrap">No wahala. 🇳🇬</span>
@@ -168,9 +171,10 @@
     <!-- ============ DASHBOARD VIEW ============ -->
     <div id="dashboard-view" class="hidden relative z-10">
       <header class="border-b-[3px] border-ink bg-white sticky top-0 z-20">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="w-full px-8 h-16 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2">Trackam</span>
+            <img src="/assets/trackam-icon-black.png" alt="Trackam logo" class="w-9 h-9 border-[3px] border-ink rounded-xl shadow-hardsm" />
+            <span class="font-display font-extrabold text-2xl">Trackam</span>
           </div>
           <div class="flex items-center gap-3">
             <span id="nav-username" class="text-sm font-bold bg-lime border-[3px] border-ink rounded-full px-3 py-1 shadow-hardsm"></span>
@@ -182,7 +186,7 @@
         </div>
       </header>
 
-      <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+      <main class="w-full px-8 py-8 space-y-8">
         <!-- Greeting + range toggle -->
         <div class="flex items-end justify-between flex-wrap gap-4">
           <div>
@@ -263,7 +267,7 @@ api_key = ...</code></pre>
           </div>
         </div>
       </main>
-      <footer class="max-w-6xl mx-auto px-4 py-10 text-center">
+      <footer class="w-full px-8 py-10 text-center">
         <span class="inline-block text-xs font-bold bg-ink text-yellow rounded-full px-4 py-1.5 -rotate-1">
           Trackam · self-hosted · built for African devs 🌍
         </span>
