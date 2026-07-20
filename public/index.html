@@ -6,7 +6,7 @@
     <title>Trackam — track your coding grind</title>
     <meta
       name="description"
-      content="An affordable, WakaTime-compatible coding time tracker built for African developers."
+      content="Trackam is an open-source, WakaTime-compatible coding time tracker built for African developers. Unlimited history, self-hostable, and free."
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -34,6 +34,7 @@
               hard: "5px 5px 0 0 #0A0A0A",
               hardlg: "8px 8px 0 0 #0A0A0A",
               hardsm: "3px 3px 0 0 #0A0A0A",
+              hardxl: "12px 12px 0 0 #0A0A0A",
             },
           },
         },
@@ -52,224 +53,409 @@
         background-image: radial-gradient(#0a0a0a11 1.5px, transparent 1.5px);
         background-size: 22px 22px;
       }
-      h1, h2, h3, .font-display {
-        font-family: "Bricolage Grotesque", system-ui, sans-serif;
-      }
+      h1, h2, h3, .font-display { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
       .blob {
-        position: fixed;
-        border-radius: 9999px;
-        filter: blur(8px);
-        opacity: 0.55;
-        z-index: 0;
-        pointer-events: none;
+        position: fixed; border-radius: 9999px; filter: blur(8px);
+        opacity: 0.5; z-index: 0; pointer-events: none;
         animation: float 9s ease-in-out infinite;
       }
       @keyframes float {
         0%, 100% { transform: translate(0, 0) rotate(0deg); }
         50% { transform: translate(0, -26px) rotate(8deg); }
       }
-      @keyframes wiggle {
-        0%, 100% { transform: rotate(-2deg); }
-        50% { transform: rotate(2deg); }
-      }
+      @keyframes wiggle { 0%,100% { transform: rotate(-2deg);} 50% { transform: rotate(2deg);} }
       .wiggle:hover { animation: wiggle 0.4s ease-in-out; }
-      .press {
-        transition: transform 0.08s ease, box-shadow 0.08s ease;
+      .press { transition: transform .08s ease, box-shadow .08s ease; }
+      .press:hover { transform: translate(-1px,-1px); box-shadow: 7px 7px 0 0 #0a0a0a; }
+      .press:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 0 #0a0a0a; }
+      .card-pop { transition: transform .12s ease, box-shadow .12s ease; }
+      .card-pop:hover { transform: translate(-3px,-3px); box-shadow: 10px 10px 0 0 #0a0a0a; }
+      @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+      .cursor-blink { animation: blink 1s step-end infinite; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
       }
-      .press:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 0 #0a0a0a; }
-      .press:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 0 #0a0a0a; }
-      .bar { transition: height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
-      .card-pop { transition: transform 0.12s ease, box-shadow 0.12s ease; }
-      .card-pop:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 #0a0a0a; }
+      .log-line { animation: rise .4s ease both; }
       ::selection { background: #ff1097; color: #fff; }
+      html { scroll-behavior: smooth; }
     </style>
   </head>
-  <body class="text-ink min-h-screen antialiased selection:bg-pink">
-    <!-- decorative blobs -->
+  <body class="text-ink antialiased">
     <div class="blob bg-pink" style="width:220px;height:220px;top:-60px;left:-40px;"></div>
-    <div class="blob bg-violet" style="width:180px;height:180px;bottom:40px;right:-30px;animation-delay:-3s;"></div>
-    <div class="blob bg-lime" style="width:140px;height:140px;top:40%;left:-50px;animation-delay:-5s;"></div>
+    <div class="blob bg-violet" style="width:180px;height:180px;top:30%;right:-40px;animation-delay:-3s;"></div>
+    <div class="blob bg-lime" style="width:150px;height:150px;bottom:10%;left:-50px;animation-delay:-5s;"></div>
 
-    <!-- ============ AUTH VIEW ============ -->
-    <div id="auth-view" class="hidden relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
-      <div class="w-full max-w-md">
-        <div class="text-center mb-8">
-          <div class="inline-block bg-pink text-white border-[3px] border-ink shadow-hard px-5 py-2 rounded-full -rotate-2 wiggle">
-            <span class="font-display font-extrabold text-2xl tracking-tight">Trackam</span>
-          </div>
-          <p class="mt-5 text-lg font-medium">
-            Track your coding grind. <span class="whitespace-nowrap">No wahala. 🇳🇬</span>
-          </p>
-          <p class="text-sm text-ink/60 mt-1">Affordable, WakaTime-friendly time tracking.</p>
+    <!-- ============ NAV ============ -->
+    <header class="sticky top-0 z-30 border-b-[3px] border-ink bg-white/90 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="/" class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2 wiggle">Trackam</a>
+        <nav class="hidden md:flex items-center gap-7 text-sm font-bold">
+          <a href="#features" class="hover:text-violet">Features</a>
+          <a href="#how" class="hover:text-violet">How it works</a>
+          <a href="#pricing" class="hover:text-violet">Pricing</a>
+          <a href="#opensource" class="hover:text-violet">Open source</a>
+        </nav>
+        <div class="flex items-center gap-2.5">
+          <a href="https://github.com/OutstandingVick/trackam" target="_blank" rel="noopener"
+            class="press hidden sm:flex items-center gap-1.5 text-sm font-bold bg-white border-[3px] border-ink rounded-xl px-3 py-1.5 shadow-hardsm">
+            ★ <span>Star</span>
+          </a>
+          <a href="/app" class="hidden sm:inline text-sm font-bold hover:text-violet px-2">Log in</a>
+          <a href="/app" class="press text-sm font-bold bg-lime border-[3px] border-ink rounded-xl px-4 py-1.5 shadow-hardsm">Get Started</a>
         </div>
-
-        <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hardlg p-6">
-          <div class="grid grid-cols-2 gap-2 mb-6">
-            <button id="tab-login"
-              class="py-2.5 rounded-xl border-[3px] border-ink font-bold text-sm bg-lime shadow-hardsm">
-              Log in
-            </button>
-            <button id="tab-signup"
-              class="py-2.5 rounded-xl border-[3px] border-ink font-bold text-sm bg-white">
-              Sign up
-            </button>
-          </div>
-
-          <p id="auth-error" class="hidden mb-4 text-sm font-semibold text-white bg-pink border-[3px] border-ink rounded-xl px-3 py-2 shadow-hardsm"></p>
-
-          <!-- Login form -->
-          <form id="login-form" class="space-y-4">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Email or username</label>
-              <input name="login" type="text" required autocomplete="username"
-                class="w-full bg-yellow border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Password</label>
-              <input name="password" type="password" required autocomplete="current-password"
-                class="w-full bg-yellow border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
-            </div>
-            <button type="submit"
-              class="press w-full bg-pink text-white border-[3px] border-ink shadow-hard font-display font-extrabold py-3 rounded-xl text-base">
-              Let's go →
-            </button>
-          </form>
-
-          <!-- Signup form -->
-          <form id="signup-form" class="space-y-4 hidden">
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Email</label>
-              <input name="email" type="email" required autocomplete="email"
-                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Username</label>
-              <input name="username" type="text" required autocomplete="username"
-                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Password</label>
-              <input name="password" type="password" required minlength="8" autocomplete="new-password"
-                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
-              <p class="text-[11px] text-ink/50 mt-1 font-medium">Minimum 8 characters, make e strong. 💪</p>
-            </div>
-            <button type="submit"
-              class="press w-full bg-violet text-white border-[3px] border-ink shadow-hard font-display font-extrabold py-3 rounded-xl text-base">
-              Create my account 🚀
-            </button>
-          </form>
-        </div>
-        <p class="text-center text-xs font-medium text-ink/50 mt-6">
-          Keeps your existing WakaTime editor plugin. Just point it here.
-        </p>
       </div>
-    </div>
+    </header>
 
-    <!-- ============ DASHBOARD VIEW ============ -->
-    <div id="dashboard-view" class="hidden relative z-10">
-      <header class="border-b-[3px] border-ink bg-white sticky top-0 z-20">
-        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2">Trackam</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span id="nav-username" class="text-sm font-bold bg-lime border-[3px] border-ink rounded-full px-3 py-1 shadow-hardsm"></span>
-            <button id="logout-btn"
-              class="press text-sm font-bold bg-white border-[3px] border-ink rounded-xl px-3 py-1.5 shadow-hardsm">
-              Log out
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <!-- Greeting + range toggle -->
-        <div class="flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">
-              How far, <span id="greet-name" class="text-violet">dev</span>! 👋
-            </h2>
-            <p class="text-ink/60 font-medium mt-2">Here's your coding grind.</p>
-          </div>
-          <div class="flex gap-2 flex-wrap">
-            <button data-range="today" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">Today</button>
-            <button data-range="week" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">7 days</button>
-            <button data-range="month" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">30 days</button>
-          </div>
-        </div>
-
-        <!-- Stat cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div class="card-pop bg-lime border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[-1deg]">
-            <p class="text-xs font-bold uppercase tracking-widest">⏱️ Total time</p>
-            <p id="stat-total" class="font-display font-extrabold text-4xl mt-3">—</p>
-          </div>
-          <div class="card-pop bg-softpink border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[1deg]">
-            <p class="text-xs font-bold uppercase tracking-widest">📊 Daily average</p>
-            <p id="stat-average" class="font-display font-extrabold text-4xl mt-3">—</p>
-          </div>
-          <div class="card-pop bg-lavender border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[-1deg]">
-            <p class="text-xs font-bold uppercase tracking-widest">💓 Heartbeats</p>
-            <p id="stat-heartbeats" class="font-display font-extrabold text-4xl mt-3">—</p>
-          </div>
-        </div>
-
-        <!-- Daily chart -->
-        <div id="chart-card" class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
-          <p class="font-display font-bold text-lg mb-5">📈 Daily breakdown</p>
-          <div id="chart" class="flex items-end gap-2 h-44"></div>
-        </div>
-
-        <!-- Breakdowns -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
-            <p class="font-display font-bold text-lg mb-4">🗂️ Projects</p>
-            <div id="projects-list" class="space-y-4"></div>
-          </div>
-          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
-            <p class="font-display font-bold text-lg mb-4">🧑‍💻 Languages</p>
-            <div id="languages-list" class="space-y-4"></div>
-          </div>
-          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
-            <p class="font-display font-bold text-lg mb-4">✏️ Editors</p>
-            <div id="editors-list" class="space-y-4"></div>
-          </div>
-          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
-            <p class="font-display font-bold text-lg mb-4">💻 Operating systems</p>
-            <div id="os-list" class="space-y-4"></div>
-          </div>
-        </div>
-
-        <!-- Setup / API key -->
-        <div class="bg-violet text-white border-[3px] border-ink rounded-3xl shadow-hardlg p-6 sm:p-8">
-          <p class="font-display font-extrabold text-2xl mb-2">🔌 Connect your editor</p>
-          <p class="text-white/80 font-medium mb-5 max-w-2xl">
-            Install the official <b>WakaTime</b> plugin, then drop this into
-            <code class="bg-white/20 rounded px-1.5 py-0.5">~/.wakatime.cfg</code>. That's the whole setup.
-          </p>
-          <pre class="bg-ink text-lime border-[3px] border-ink rounded-2xl p-4 text-xs sm:text-sm overflow-x-auto shadow-hardsm"><code id="config-snippet">[settings]
-api_url = ...
-api_key = ...</code></pre>
-          <div class="flex items-center gap-3 mt-5 flex-wrap">
-            <button id="copy-config"
-              class="press bg-lime text-ink border-[3px] border-ink rounded-xl px-5 py-2.5 font-bold shadow-hard">
-              Copy config
-            </button>
-            <button id="regenerate-key"
-              class="press bg-white text-ink border-[3px] border-ink rounded-xl px-5 py-2.5 font-bold shadow-hard">
-              🔄 New API key
-            </button>
-            <span id="copy-feedback" class="hidden bg-pink text-white border-[3px] border-ink rounded-full px-3 py-1 text-xs font-bold shadow-hardsm">Copied! ✨</span>
-          </div>
-        </div>
-      </main>
-      <footer class="max-w-6xl mx-auto px-4 py-10 text-center">
-        <span class="inline-block text-xs font-bold bg-ink text-yellow rounded-full px-4 py-1.5 -rotate-1">
-          Trackam · self-hosted · built for African devs 🌍
+    <main class="relative z-10">
+      <!-- ============ HERO ============ -->
+      <section class="max-w-5xl mx-auto px-4 pt-16 pb-10 text-center">
+        <span class="inline-block bg-lavender border-[3px] border-ink rounded-full px-4 py-1.5 text-sm font-bold shadow-hardsm -rotate-1">
+          🌍 Open source · WakaTime-compatible
         </span>
-      </footer>
-    </div>
+        <h1 class="font-display font-extrabold text-5xl sm:text-7xl leading-[0.95] mt-6">
+          <span class="inline-block bg-lime border-[3px] border-ink shadow-hard rounded-2xl px-3 -rotate-2">Track</span>
+          your coding grind.
+        </h1>
+        <p class="max-w-2xl mx-auto mt-7 text-lg sm:text-xl font-medium text-ink/70">
+          Trackam automatically tracks how much time you spend coding — by project,
+          language and editor. Same automatic tracking as WakaTime, but
+          <b class="text-ink">self-hostable, unlimited history, and free.</b> No $9/month.
+        </p>
 
-    <script src="/app.js"></script>
+        <!-- Requested "Try it" button, right after the hero text -->
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="/app"
+            class="press bg-pink text-white border-[3px] border-ink shadow-hardlg font-display font-extrabold text-lg px-9 py-4 rounded-2xl">
+            Try it →
+          </a>
+          <button id="copy-hero"
+            class="press group flex items-center gap-3 bg-white border-[3px] border-ink shadow-hard rounded-2xl px-5 py-4 font-mono text-sm">
+            <span class="text-violet font-bold">$</span>
+            <code id="hero-cmd">npm i -g @wakatime/cli</code>
+            <span id="hero-copy-label" class="text-ink/40 font-sans text-xs font-bold">copy</span>
+          </button>
+        </div>
+        <p class="mt-4 text-xs font-semibold text-ink/40">Keep your existing editor plugin. Just point it at Trackam.</p>
+
+        <!-- Terminal mock -->
+        <div class="mt-12 text-left max-w-3xl mx-auto bg-ink border-[3px] border-ink rounded-2xl shadow-hardxl overflow-hidden">
+          <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10">
+            <span class="w-3 h-3 rounded-full bg-pink"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow"></span>
+            <span class="w-3 h-3 rounded-full bg-lime"></span>
+            <span class="ml-3 text-white/40 text-xs font-mono">~/.wakatime.cfg + trackam</span>
+          </div>
+          <pre class="p-5 text-[12px] sm:text-sm font-mono leading-relaxed text-white/90 overflow-x-auto"><span class="text-white/40"># ~/.wakatime.cfg</span>
+<span class="text-lime">[settings]</span>
+api_url = <span class="text-pink">https://your-trackam.app/api/v1</span>
+api_key = <span class="text-violet">••••••••-••••-••••-••••-••••••••</span>
+
+<span class="text-lime">→</span> heartbeats streaming to Trackam…
+<span id="live-log"></span></pre>
+        </div>
+      </section>
+
+      <!-- ============ FIRST-CLASS DX ============ -->
+      <section id="features" class="max-w-6xl mx-auto px-4 py-16">
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">
+          First-class<br /><span class="text-violet">developer experience</span>
+        </h2>
+        <div class="grid md:grid-cols-3 gap-6 mt-10">
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-lime border-[3px] border-ink rounded-xl text-xl mb-4">⚡</div>
+            <h3 class="font-display font-bold text-xl">Set up in one line</h3>
+            <p class="text-ink/60 font-medium mt-2 mb-4">Point your WakaTime plugin at Trackam and you're tracking. Seriously, that's it.</p>
+            <div class="bg-ink text-lime font-mono text-xs rounded-xl border-[3px] border-ink p-3">api_url = .../api/v1</div>
+          </div>
+          <div class="card-pop bg-softpink border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-white border-[3px] border-ink rounded-xl text-xl mb-4">📊</div>
+            <h3 class="font-display font-bold text-xl">Instant insights</h3>
+            <p class="text-ink/70 font-medium mt-2 mb-4">See today's time, daily averages, and breakdowns the second heartbeats arrive.</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2"><span class="text-xs font-bold w-16">TypeScript</span><div class="h-2.5 flex-1 bg-white border-2 border-ink rounded-full overflow-hidden"><div class="h-full bg-pink" style="width:82%"></div></div></div>
+              <div class="flex items-center gap-2"><span class="text-xs font-bold w-16">Python</span><div class="h-2.5 flex-1 bg-white border-2 border-ink rounded-full overflow-hidden"><div class="h-full bg-violet" style="width:54%"></div></div></div>
+              <div class="flex items-center gap-2"><span class="text-xs font-bold w-16">CSS</span><div class="h-2.5 flex-1 bg-white border-2 border-ink rounded-full overflow-hidden"><div class="h-full bg-lime" style="width:33%"></div></div></div>
+            </div>
+          </div>
+          <div class="card-pop bg-lavender border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-white border-[3px] border-ink rounded-xl text-xl mb-4">🧩</div>
+            <h3 class="font-display font-bold text-xl">Works in your editor</h3>
+            <p class="text-ink/70 font-medium mt-2 mb-4">Uses the official WakaTime plugins — nothing new to learn.</p>
+            <div class="flex flex-wrap gap-2">
+              <button data-editor="vscode" class="editor-tab text-xs font-bold border-[3px] border-ink rounded-lg px-2.5 py-1 bg-white">VS Code</button>
+              <button data-editor="jetbrains" class="editor-tab text-xs font-bold border-[3px] border-ink rounded-lg px-2.5 py-1 bg-white">JetBrains</button>
+              <button data-editor="vim" class="editor-tab text-xs font-bold border-[3px] border-ink rounded-lg px-2.5 py-1 bg-white">Vim</button>
+            </div>
+            <div id="editor-panel" class="mt-3 bg-ink text-lime font-mono text-xs rounded-xl border-[3px] border-ink p-3"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ IT JUST WORKS (flow) ============ -->
+      <section id="how" class="max-w-6xl mx-auto px-4 py-16 text-center">
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl">It just <span class="bg-yellow border-[3px] border-ink shadow-hard rounded-xl px-2 inline-block rotate-1">works</span></h2>
+        <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">From keystroke to dashboard in milliseconds. No config, no fuss.</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-12">
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="text-4xl mb-3">⌨️</div>
+            <h3 class="font-display font-bold text-lg">You code</h3>
+            <p class="text-ink/60 text-sm font-medium mt-1">In any editor you already use.</p>
+          </div>
+          <div class="card-pop bg-softpink border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="text-4xl mb-3">💓</div>
+            <h3 class="font-display font-bold text-lg">Heartbeats</h3>
+            <p class="text-ink/70 text-sm font-medium mt-1">The plugin sends tiny activity events.</p>
+          </div>
+          <div class="card-pop bg-lavender border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="text-4xl mb-3">🗄️</div>
+            <h3 class="font-display font-bold text-lg">Trackam</h3>
+            <p class="text-ink/70 text-sm font-medium mt-1">Stores &amp; crunches them on your server.</p>
+          </div>
+          <div class="card-pop bg-lime border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="text-4xl mb-3">📈</div>
+            <h3 class="font-display font-bold text-lg">Dashboard</h3>
+            <p class="text-ink/80 text-sm font-medium mt-1">Beautiful stats, unlimited history.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ YOUR DATA, YOUR HISTORY ============ -->
+      <section class="max-w-6xl mx-auto px-4 py-16">
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">Your data,<br />your <span class="text-pink">history</span>.</h2>
+            <p class="text-lg font-medium text-ink/70 mt-5">
+              WakaTime paywalls your own past behind a subscription. Trackam keeps
+              <b class="text-ink">all of it, forever</b> — because it runs on your server.
+            </p>
+            <ul class="mt-6 space-y-3 font-semibold">
+              <li class="flex items-center gap-3"><span class="w-6 h-6 grid place-items-center bg-lime border-[3px] border-ink rounded-full text-xs">✓</span> Unlimited dashboard history</li>
+              <li class="flex items-center gap-3"><span class="w-6 h-6 grid place-items-center bg-lime border-[3px] border-ink rounded-full text-xs">✓</span> Self-host on a cheap VPS</li>
+              <li class="flex items-center gap-3"><span class="w-6 h-6 grid place-items-center bg-lime border-[3px] border-ink rounded-full text-xs">✓</span> Export &amp; own your raw data</li>
+            </ul>
+          </div>
+          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hardlg p-6 rotate-1">
+            <div class="flex items-baseline justify-between">
+              <span class="text-xs font-bold uppercase tracking-widest text-ink/50">This month</span>
+              <span class="text-xs font-bold bg-lime border-2 border-ink rounded-full px-2">+12%</span>
+            </div>
+            <p class="font-display font-extrabold text-5xl mt-2">142 hrs</p>
+            <div class="flex items-end gap-1.5 h-24 mt-6">
+              <div class="flex-1 bg-pink border-2 border-ink rounded-t" style="height:45%"></div>
+              <div class="flex-1 bg-violet border-2 border-ink rounded-t" style="height:70%"></div>
+              <div class="flex-1 bg-lime border-2 border-ink rounded-t" style="height:35%"></div>
+              <div class="flex-1 bg-orange border-2 border-ink rounded-t" style="height:88%"></div>
+              <div class="flex-1 bg-purple border-2 border-ink rounded-t" style="height:60%"></div>
+              <div class="flex-1 bg-pink border-2 border-ink rounded-t" style="height:50%"></div>
+              <div class="flex-1 bg-violet border-2 border-ink rounded-t" style="height:95%"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TRACK EVERY DETAIL ============ -->
+      <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Track <span class="text-violet">every</span> detail</h2>
+        <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">
+          Trackam breaks your time down every way that matters.
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mt-12">
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6"><div class="text-3xl mb-2">🗂️</div><h3 class="font-display font-bold">Projects</h3></div>
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6"><div class="text-3xl mb-2">🧑‍💻</div><h3 class="font-display font-bold">Languages</h3></div>
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6"><div class="text-3xl mb-2">✏️</div><h3 class="font-display font-bold">Editors</h3></div>
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6"><div class="text-3xl mb-2">💻</div><h3 class="font-display font-bold">Operating&nbsp;systems</h3></div>
+        </div>
+      </section>
+
+      <!-- ============ EVERY EDITOR (mirror "any protocol") ============ -->
+      <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Every editor,<br /><span class="text-ink/40">every language.</span></h2>
+        <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">
+          If it has a WakaTime plugin, Trackam works with it. That's 50+ editors and hundreds of languages.
+        </p>
+        <div class="grid md:grid-cols-3 gap-6 mt-12 text-left">
+          <div class="card-pop bg-lavender border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-white border-[3px] border-ink rounded-xl text-xl mb-4">🧩</div>
+            <h3 class="font-display font-bold text-xl">50+ editors</h3>
+            <p class="text-ink/70 font-medium mt-2">VS Code, Cursor, JetBrains, Vim, Neovim, Sublime, Emacs and more.</p>
+          </div>
+          <div class="card-pop bg-softpink border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-white border-[3px] border-ink rounded-xl text-xl mb-4">🌐</div>
+            <h3 class="font-display font-bold text-xl">Any language</h3>
+            <p class="text-ink/70 font-medium mt-2">Automatically detects the language of every file you touch.</p>
+          </div>
+          <div class="card-pop bg-yellow border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <div class="w-11 h-11 grid place-items-center bg-white border-[3px] border-ink rounded-xl text-xl mb-4">🔒</div>
+            <h3 class="font-display font-bold text-xl">Self-hosted</h3>
+            <p class="text-ink/70 font-medium mt-2">Run the whole thing on your own box. No vendor lock-in, ever.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PRICING ============ -->
+      <section id="pricing" class="max-w-6xl mx-auto px-4 py-16 text-center">
+        <h2 class="font-display font-extrabold text-4xl sm:text-5xl">Simple, honest <span class="text-pink">pricing</span></h2>
+        <p class="max-w-2xl mx-auto mt-4 text-lg font-medium text-ink/60">Spoiler: the important number is zero.</p>
+        <div class="grid md:grid-cols-2 gap-6 mt-12 max-w-3xl mx-auto text-left">
+          <div class="card-pop bg-lime border-[3px] border-ink rounded-3xl shadow-hardlg p-8">
+            <span class="text-xs font-bold uppercase tracking-widest">Self-hosted</span>
+            <p class="font-display font-extrabold text-5xl mt-3">Free<span class="text-lg font-bold text-ink/50"> forever</span></p>
+            <ul class="mt-6 space-y-2 font-semibold text-sm">
+              <li>✓ Unlimited history</li>
+              <li>✓ All features, no limits</li>
+              <li>✓ Your data on your server</li>
+              <li>✓ Open source (MIT)</li>
+            </ul>
+            <a href="/app" class="press mt-7 block text-center bg-ink text-white font-display font-extrabold py-3 rounded-xl border-[3px] border-ink">Try it →</a>
+          </div>
+          <div class="card-pop bg-white border-[3px] border-ink rounded-3xl shadow-hardlg p-8">
+            <span class="text-xs font-bold uppercase tracking-widest">Hosted <span class="bg-lavender border-2 border-ink rounded-full px-2 ml-1">soon</span></span>
+            <p class="font-display font-extrabold text-5xl mt-3">₦<span>1k</span><span class="text-lg font-bold text-ink/50">/mo</span></p>
+            <ul class="mt-6 space-y-2 font-semibold text-sm">
+              <li>✓ We host it for you</li>
+              <li>✓ Still unlimited history</li>
+              <li>✓ Pay in naira (Paystack)</li>
+              <li>✓ Funds free hosting for others</li>
+            </ul>
+            <span class="mt-7 block text-center bg-grey text-ink/50 font-display font-extrabold py-3 rounded-xl border-[3px] border-ink cursor-not-allowed">Coming soon</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ OPEN SOURCE ============ -->
+      <section id="opensource" class="max-w-6xl mx-auto px-4 py-16">
+        <div class="bg-violet text-white border-[3px] border-ink rounded-3xl shadow-hardxl p-8 sm:p-12">
+          <div class="grid md:grid-cols-2 gap-10 items-center">
+            <div>
+              <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">100%<br /><span class="text-lime">Open Source</span></h2>
+              <p class="text-white/80 font-medium mt-5 max-w-md">
+                Built in the open. Inspect the code, contribute features, or self-host the
+                whole platform. Transparency you can't paywall.
+              </p>
+              <div class="flex flex-wrap gap-3 mt-7">
+                <a href="https://github.com/OutstandingVick/trackam" target="_blank" rel="noopener"
+                  class="press bg-white text-ink border-[3px] border-ink rounded-xl px-5 py-3 font-bold shadow-hard">★ Star on GitHub</a>
+                <a href="/app" class="press bg-lime text-ink border-[3px] border-ink rounded-xl px-5 py-3 font-bold shadow-hard">Try it →</a>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="bg-white/10 border-[3px] border-white/40 rounded-2xl p-4"><div class="text-2xl mb-1">🔍</div><h3 class="font-bold">Auditable</h3><p class="text-white/70 text-sm">Read every line yourself.</p></div>
+              <div class="bg-white/10 border-[3px] border-white/40 rounded-2xl p-4"><div class="text-2xl mb-1">🧑‍🤝‍🧑</div><h3 class="font-bold">Community</h3><p class="text-white/70 text-sm">Built with devs like you.</p></div>
+              <div class="bg-white/10 border-[3px] border-white/40 rounded-2xl p-4"><div class="text-2xl mb-1">🏠</div><h3 class="font-bold">Self-hostable</h3><p class="text-white/70 text-sm">Your infra, your rules.</p></div>
+              <div class="bg-white/10 border-[3px] border-white/40 rounded-2xl p-4"><div class="text-2xl mb-1">💚</div><h3 class="font-bold">Free forever</h3><p class="text-white/70 text-sm">Core stays free. Always.</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FINAL CTA ============ -->
+      <section class="max-w-5xl mx-auto px-4 py-20 text-center">
+        <h2 class="font-display font-extrabold text-4xl sm:text-6xl leading-none">Ready to see<br />where your hours go?</h2>
+        <a href="/app" class="press inline-block mt-9 bg-pink text-white border-[3px] border-ink shadow-hardxl font-display font-extrabold text-xl px-12 py-5 rounded-2xl">
+          Try it →
+        </a>
+        <p class="mt-4 text-sm font-semibold text-ink/50">Free, open source, no wahala. 🇳🇬</p>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="border-t-[3px] border-ink bg-white relative z-10">
+      <div class="max-w-6xl mx-auto px-4 py-12 grid grid-cols-2 md:grid-cols-5 gap-8">
+        <div class="col-span-2">
+          <span class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2 inline-block">Trackam</span>
+          <p class="text-ink/60 font-medium mt-4 max-w-xs">Open-source coding time tracking, built for African developers. 🌍</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Product</h4>
+          <ul class="space-y-2 text-sm font-medium text-ink/60">
+            <li><a href="#features" class="hover:text-violet">Features</a></li>
+            <li><a href="#pricing" class="hover:text-violet">Pricing</a></li>
+            <li><a href="/app" class="hover:text-violet">Dashboard</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Resources</h4>
+          <ul class="space-y-2 text-sm font-medium text-ink/60">
+            <li><a href="https://github.com/OutstandingVick/trackam" class="hover:text-violet">GitHub</a></li>
+            <li><a href="https://github.com/OutstandingVick/trackam#readme" class="hover:text-violet">Docs</a></li>
+            <li><a href="#how" class="hover:text-violet">How it works</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">Legal</h4>
+          <ul class="space-y-2 text-sm font-medium text-ink/60">
+            <li><a href="#" class="hover:text-violet">Privacy</a></li>
+            <li><a href="#" class="hover:text-violet">Terms</a></li>
+            <li><a href="#" class="hover:text-violet">License (MIT)</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-grey">
+        <p class="max-w-6xl mx-auto px-4 py-5 text-xs font-semibold text-ink/40">© 2026 Trackam · self-hosted, WakaTime-compatible coding time tracking</p>
+      </div>
+    </footer>
+
+    <script>
+      // Copy the hero command
+      const copyBtn = document.getElementById("copy-hero");
+      copyBtn.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(document.getElementById("hero-cmd").textContent);
+        const label = document.getElementById("hero-copy-label");
+        label.textContent = "copied!";
+        label.classList.add("text-lime");
+        setTimeout(() => { label.textContent = "copy"; label.classList.remove("text-lime"); }, 1400);
+      });
+
+      // Editor tabs
+      const editorSnippets = {
+        vscode: "ext install WakaTime.vscode-wakatime",
+        jetbrains: "Settings ▸ Plugins ▸ search “WakaTime”",
+        vim: 'Plug \'wakatime/vim-wakatime\'',
+      };
+      const panel = document.getElementById("editor-panel");
+      const tabs = document.querySelectorAll(".editor-tab");
+      function selectEditor(name) {
+        tabs.forEach((t) => {
+          const on = t.dataset.editor === name;
+          t.classList.toggle("bg-lime", on);
+          t.classList.toggle("shadow-hardsm", on);
+          t.classList.toggle("bg-white", !on);
+        });
+        panel.textContent = "$ " + editorSnippets[name];
+      }
+      tabs.forEach((t) => t.addEventListener("click", () => selectEditor(t.dataset.editor)));
+      selectEditor("vscode");
+
+      // Animated live heartbeat log in the hero terminal
+      const logEl = document.getElementById("live-log");
+      const samples = [
+        ["index.ts", "trackam", "TypeScript"],
+        ["app.js", "trackam", "JavaScript"],
+        ["schema.sql", "trackam", "SQL"],
+        ["main.py", "naija-pay", "Python"],
+        ["styles.css", "portfolio", "CSS"],
+        ["Dockerfile", "trackam", "Docker"],
+      ];
+      let i = 0, mins = 222;
+      function pushLog() {
+        const [file, proj, lang] = samples[i % samples.length];
+        i++;
+        mins += Math.floor(Math.random() * 3) + 1;
+        const h = Math.floor(mins / 60), m = mins % 60;
+        const line = document.createElement("span");
+        line.className = "log-line block";
+        line.innerHTML =
+          '<span class="text-white/40">' + new Date().toLocaleTimeString() + "</span>  " +
+          '<span class="text-pink">' + proj + "</span>/" +
+          '<span class="text-white/90">' + file + "</span>  " +
+          '<span class="text-violet">' + lang + "</span>" +
+          '<span class="float-right text-lime">Today: ' + h + "h " + m + 'm</span>';
+        logEl.appendChild(line);
+        while (logEl.childElementCount > 5) logEl.removeChild(logEl.firstChild);
+      }
+      pushLog();
+      setInterval(pushLog, 1800);
+    </script>
   </body>
 </html>

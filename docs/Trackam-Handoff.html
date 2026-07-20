@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Trackam — Project Handoff</title>
+    <style>
+      :root {
+        --ink: #0a0a0a;
+        --orange: #e8642f;
+        --pink: #ff1097;
+        --softpink: #fecdec;
+        --lime: #9ce404;
+        --yellow: #feffb2;
+        --lavender: #eed6ff;
+        --violet: #9800ff;
+        --purple: #5900c0;
+        --grey: #e0e0e0;
+      }
+
+      @page {
+        size: A4;
+        margin: 18mm 16mm;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+      body {
+        font-family: "Helvetica Neue", Helvetica, Arial, "Segoe UI", sans-serif;
+        color: var(--ink);
+        line-height: 1.55;
+        font-size: 11pt;
+        margin: 0;
+      }
+
+      h1, h2, h3, h4 { line-height: 1.15; font-weight: 800; }
+
+      h2 {
+        font-size: 20pt;
+        margin: 0 0 4px;
+        padding-bottom: 6px;
+        border-bottom: 3px solid var(--ink);
+      }
+      h3 { font-size: 13.5pt; margin: 18px 0 6px; }
+      h4 { font-size: 11.5pt; margin: 14px 0 4px; }
+      p { margin: 6px 0; }
+      ul, ol { margin: 6px 0; padding-left: 20px; }
+      li { margin: 3px 0; }
+
+      code {
+        font-family: "SF Mono", "Menlo", Consolas, monospace;
+        background: #f2f2f2;
+        border: 1px solid var(--grey);
+        border-radius: 4px;
+        padding: 1px 5px;
+        font-size: 9.5pt;
+      }
+      pre {
+        font-family: "SF Mono", "Menlo", Consolas, monospace;
+        background: var(--ink);
+        color: #eafbc0;
+        border-radius: 10px;
+        padding: 14px 16px;
+        font-size: 9pt;
+        line-height: 1.5;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      pre .k { color: #ff8bd0; }
+      pre .c { color: #8b93a7; }
+
+      a { color: var(--purple); text-decoration: none; }
+
+      /* ---------- Cover ---------- */
+      .cover {
+        height: 245mm;
+        background: var(--ink);
+        color: #fff;
+        border-radius: 18px;
+        padding: 26mm 20mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+      .cover .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(2px);
+        opacity: 0.9;
+      }
+      .badge {
+        display: inline-block;
+        background: var(--pink);
+        color: #fff;
+        border: 3px solid #fff;
+        border-radius: 999px;
+        padding: 6px 18px;
+        font-weight: 800;
+        font-size: 15pt;
+        transform: rotate(-2deg);
+      }
+      .cover h1 {
+        font-size: 46pt;
+        margin: 0;
+        letter-spacing: -1px;
+      }
+      .cover .accent-lime { color: var(--lime); }
+      .cover .accent-pink { color: var(--pink); }
+      .cover .sub { font-size: 14pt; color: #d7d7d7; max-width: 130mm; }
+      .cover .meta { font-size: 10pt; color: #b9b9b9; }
+      .cover .meta b { color: #fff; }
+      .pill {
+        display: inline-block; background: var(--lime); color: var(--ink);
+        border-radius: 999px; padding: 3px 12px; font-weight: 700; font-size: 9.5pt;
+        margin-right: 6px;
+      }
+
+      /* ---------- Layout helpers ---------- */
+      section { break-before: page; }
+      section.nobreak { break-before: auto; }
+      .avoid { break-inside: avoid; }
+
+      .lead {
+        background: var(--yellow);
+        border: 3px solid var(--ink);
+        border-radius: 12px;
+        padding: 12px 16px;
+        margin: 12px 0;
+      }
+      .callout {
+        border-left: 6px solid var(--violet);
+        background: var(--lavender);
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin: 12px 0;
+      }
+      .warn {
+        border-left: 6px solid var(--orange);
+        background: #fff0e9;
+        padding: 10px 14px;
+        border-radius: 6px;
+        margin: 12px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 10px 0;
+        font-size: 10pt;
+      }
+      th, td {
+        border: 1.5px solid var(--ink);
+        padding: 6px 9px;
+        text-align: left;
+        vertical-align: top;
+      }
+      th { background: var(--softpink); font-weight: 800; }
+      tr:nth-child(even) td { background: #faf7fb; }
+
+      .method { font-weight: 800; font-family: "SF Mono", Menlo, monospace; font-size: 9pt; }
+      .m-get { color: #0a7d34; }
+      .m-post { color: var(--purple); }
+
+      .toc li { margin: 5px 0; font-weight: 600; }
+      .toc .dot { color: var(--grey); }
+
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      .kv { border: 1.5px solid var(--ink); border-radius: 8px; padding: 8px 12px; }
+      .kv b { display: block; font-size: 9pt; text-transform: uppercase; letter-spacing: .5px; color: var(--purple); }
+
+      .footer-note { margin-top: 10px; font-size: 8.5pt; color: #777; }
+      .swatch { display:inline-block; width:12px; height:12px; border:1px solid var(--ink); border-radius:3px; vertical-align:middle; margin-right:6px; }
+    </style>
+  </head>
+  <body>
+    <!-- ==================== COVER ==================== -->
+    <div class="cover">
+      <div class="blob" style="width:120px;height:120px;background:var(--pink);top:-30px;right:40px;"></div>
+      <div class="blob" style="width:90px;height:90px;background:var(--violet);bottom:120px;left:-20px;"></div>
+      <div class="blob" style="width:70px;height:70px;background:var(--lime);top:120px;right:-15px;"></div>
+
+      <div>
+        <span class="badge">Trackam</span>
+      </div>
+      <div>
+        <h1><span class="accent-pink">Track</span> your<br />coding grind.</h1>
+        <p class="sub">
+          Comprehensive project handoff — an affordable, self-hostable,
+          WakaTime-compatible coding time tracker built for African developers.
+        </p>
+        <div style="margin-top:14px;">
+          <span class="pill">Node.js + TypeScript</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill">Open Source</span>
+        </div>
+      </div>
+      <div class="meta">
+        <p><b>Repository:</b> github.com/OutstandingVick/trackam</p>
+        <p><b>Document:</b> Engineering &amp; product handoff &nbsp;·&nbsp; <b>Version:</b> 0.1.0 &nbsp;·&nbsp; <b>Date:</b> 20 July 2026</p>
+        <p><b>Status:</b> MVP complete — core ingestion, dashboard &amp; deploy ready</p>
+      </div>
+    </div>
+
+    <!-- ==================== TOC ==================== -->
+    <section>
+      <h2>Contents</h2>
+      <ol class="toc">
+        <li>Executive summary</li>
+        <li>Problem &amp; market</li>
+        <li>How it works (the core idea)</li>
+        <li>Architecture overview</li>
+        <li>Technology stack</li>
+        <li>Data model</li>
+        <li>API reference</li>
+        <li>The coding-time algorithm</li>
+        <li>Authentication &amp; security</li>
+        <li>Frontend &amp; design system</li>
+        <li>Configuration (environment variables)</li>
+        <li>Local development</li>
+        <li>Deployment</li>
+        <li>Repository &amp; project structure</li>
+        <li>Testing &amp; verification status</li>
+        <li>Known limitations</li>
+        <li>Roadmap &amp; monetization</li>
+        <li>Onboarding checklist for a new developer</li>
+      </ol>
+    </section>
+
+    <!-- ==================== 1. EXEC SUMMARY ==================== -->
+    <section>
+      <h2>1 · Executive summary</h2>
+      <div class="lead">
+        <b>Trackam</b> is an automatic coding-time tracker — like WakaTime — that is
+        <b>free to self-host</b> and <b>100% compatible with the official WakaTime editor
+        plugins</b>. It targets developers for whom WakaTime's US$9–14/month subscription
+        is unaffordable, starting with the Nigerian / African developer community.
+      </div>
+      <p>
+        Because the WakaTime editor plugins are open source and speak a documented HTTP API,
+        Trackam does not ship its own editor extensions. Instead it re-implements the
+        WakaTime ingestion API. Developers keep the plugin they already use (VS Code, Cursor,
+        JetBrains, Vim, etc.) and simply point its <code>api_url</code> at their Trackam server.
+      </p>
+      <h3>What is built today (MVP)</h3>
+      <ul>
+        <li>WakaTime-compatible heartbeat ingestion (bulk &amp; single) and editor status-bar endpoint.</li>
+        <li>Email/password accounts with per-user API keys.</li>
+        <li>Dashboard: Today / 7-day / 30-day totals, daily chart, and breakdowns by project, language, editor and OS.</li>
+        <li>A distinctive neo-brutalist UI in the brand palette.</li>
+        <li>One-command Docker Compose deployment (app + Postgres + migrations).</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 2. PROBLEM ==================== -->
+    <section>
+      <h2>2 · Problem &amp; market</h2>
+      <p>
+        WakaTime is the de-facto coding-time tracker, but its pricing puts it out of reach for
+        many developers in emerging markets. The paid tiers are <b>$9/mo (Basic)</b> and
+        <b>$14/mo (Premium)</b>; crucially, the free tier limits dashboard history to roughly
+        the last week, so a developer's own historical data is effectively paywalled.
+      </p>
+      <h3>Why the cost feels high</h3>
+      <ul>
+        <li>The heavy lifting (editor plugins + <code>wakatime-cli</code>) is open source and runs on the user's machine — the subscription mostly pays for hosted dashboards and <b>history retention</b>.</li>
+        <li>Access to your own past data is the primary thing being sold.</li>
+        <li>Priced in USD, the amount is disproportionately large in NGN terms.</li>
+      </ul>
+      <h3>Trackam's wedge</h3>
+      <p>
+        Give developers unlimited history and the same automatic tracking for free by
+        self-hosting, with an optional low-cost hosted tier priced in naira later. The
+        addressable audience includes bootcamps, student developer communities, and indie
+        devs across Africa.
+      </p>
+    </section>
+
+    <!-- ==================== 3. HOW IT WORKS ==================== -->
+    <section>
+      <h2>3 · How it works (the core idea)</h2>
+      <p>
+        WakaTime editor plugins emit <b>heartbeats</b> — small events describing what you are
+        editing right now (file, project, language, branch, whether you're typing, etc.). The
+        plugin batches these and POSTs them to whatever <code>api_url</code> is configured.
+        Trackam implements the same endpoints those plugins expect, so it is a drop-in server.
+      </p>
+      <pre>Editor (WakaTime plugin)
+   │  batches heartbeats
+   ▼
+POST /api/v1/users/current/heartbeats.bulk   ── Authorization: Basic base64(api_key)
+   │
+   ▼
+Trackam API (Express)  ──►  PostgreSQL (heartbeats table)
+   │
+   ▼
+Dashboard  ──►  GET /api/stats?range=...  ──►  duration algorithm  ──►  charts</pre>
+      <div class="callout">
+        The only thing a developer changes is two lines in <code>~/.wakatime.cfg</code>:
+        <code>api_url</code> and <code>api_key</code>. No new software to install.
+      </div>
+    </section>
+
+    <!-- ==================== 4. ARCHITECTURE ==================== -->
+    <section>
+      <h2>4 · Architecture overview</h2>
+      <p>Trackam is a single Node.js service that serves three concerns from one process:</p>
+      <ul>
+        <li><b>WakaTime-compatible ingestion API</b> (mounted at <code>/api/v1</code>) — authenticated by API key.</li>
+        <li><b>Account &amp; stats API</b> (<code>/api/account</code>, <code>/api/stats</code>) — authenticated by a signed session cookie.</li>
+        <li><b>Static frontend</b> — the dashboard SPA served from <code>public/</code>.</li>
+      </ul>
+      <p>
+        State lives entirely in PostgreSQL. There is no background worker or queue; coding-time
+        durations are computed on-read from raw heartbeats, which keeps ingestion cheap and the
+        system easy to reason about at MVP scale.
+      </p>
+      <div class="grid2">
+        <div class="kv"><b>Runtime</b>Single stateless Node process (horizontally scalable behind a load balancer).</div>
+        <div class="kv"><b>Storage</b>PostgreSQL — raw heartbeats + users.</div>
+        <div class="kv"><b>Compute model</b>Durations derived at query time (no pre-aggregation yet).</div>
+        <div class="kv"><b>Deploy unit</b>Docker image; Compose bundles app + DB + migration job.</div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. TECH STACK ==================== -->
+    <section>
+      <h2>5 · Technology stack</h2>
+      <table>
+        <tr><th>Layer</th><th>Choice</th><th>Notes</th></tr>
+        <tr><td>Language</td><td>TypeScript (ES2022, NodeNext)</td><td>Strict mode enabled.</td></tr>
+        <tr><td>Runtime</td><td>Node.js ≥ 18</td><td>ESM modules.</td></tr>
+        <tr><td>Web framework</td><td>Express 4</td><td>JSON body limit 2 MB.</td></tr>
+        <tr><td>Database</td><td>PostgreSQL (via <code>pg</code>)</td><td>Custom type parsers for INT8/FLOAT8.</td></tr>
+        <tr><td>Auth</td><td>bcryptjs, jsonwebtoken, cookie-parser</td><td>Password hashing + JWT session cookie.</td></tr>
+        <tr><td>Config</td><td>dotenv</td><td><code>.env</code> driven.</td></tr>
+        <tr><td>Frontend</td><td>Static HTML + vanilla JS + Tailwind (Play CDN)</td><td>No build step for the UI today.</td></tr>
+        <tr><td>Dev tooling</td><td>tsx (watch), tsc (build)</td><td>Smoke test runs on compiled output.</td></tr>
+        <tr><td>Packaging</td><td>Docker (multi-stage, node:20-alpine) + Compose</td><td>Postgres 16-alpine.</td></tr>
+      </table>
+      <h4>NPM scripts</h4>
+      <table>
+        <tr><th>Script</th><th>Command</th><th>Purpose</th></tr>
+        <tr><td><code>dev</code></td><td>tsx watch src/index.ts</td><td>Hot-reload dev server.</td></tr>
+        <tr><td><code>build</code></td><td>tsc -p tsconfig.json</td><td>Compile to <code>dist/</code>.</td></tr>
+        <tr><td><code>start</code></td><td>node dist/index.js</td><td>Run compiled server.</td></tr>
+        <tr><td><code>migrate</code></td><td>tsx src/migrate.ts</td><td>Apply <code>db/schema.sql</code>.</td></tr>
+        <tr><td><code>test</code></td><td>tsc &amp;&amp; node dist/smoke.js</td><td>Core-logic smoke checks.</td></tr>
+      </table>
+    </section>
+
+    <!-- ==================== 6. DATA MODEL ==================== -->
+    <section>
+      <h2>6 · Data model</h2>
+      <p>Two tables. The schema lives in <code>db/schema.sql</code> and is applied by the migrate script.</p>
+      <h3>users</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td>id</td><td>UUID (PK)</td><td>Default <code>gen_random_uuid()</code>.</td></tr>
+        <tr><td>email</td><td>TEXT, UNIQUE</td><td>Stored lower-cased.</td></tr>
+        <tr><td>username</td><td>TEXT, UNIQUE</td><td>3–32 chars: letters, numbers, _ or -.</td></tr>
+        <tr><td>password_hash</td><td>TEXT</td><td>bcrypt (cost 10).</td></tr>
+        <tr><td>api_key</td><td>UUID, UNIQUE</td><td>Used by editor plugins; rotatable.</td></tr>
+        <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>Default <code>now()</code>.</td></tr>
+      </table>
+      <h3>heartbeats</h3>
+      <table>
+        <tr><th>Column</th><th>Type</th><th>Notes</th></tr>
+        <tr><td>id</td><td>BIGSERIAL (PK)</td><td></td></tr>
+        <tr><td>user_id</td><td>UUID (FK → users)</td><td>ON DELETE CASCADE.</td></tr>
+        <tr><td>time</td><td>DOUBLE PRECISION</td><td>Epoch seconds (fractional) from the CLI.</td></tr>
+        <tr><td>entity, type, category</td><td>TEXT</td><td>File path, "file", "coding" etc.</td></tr>
+        <tr><td>project, branch, language</td><td>TEXT</td><td>Editing context.</td></tr>
+        <tr><td>dependencies</td><td>TEXT</td><td>Comma-joined.</td></tr>
+        <tr><td>lines, lineno, cursorpos</td><td>INTEGER</td><td>Position metadata.</td></tr>
+        <tr><td>is_write</td><td>BOOLEAN</td><td>Save vs read.</td></tr>
+        <tr><td>editor, operating_system, machine</td><td>TEXT</td><td>Parsed from User-Agent when absent.</td></tr>
+        <tr><td>created_at</td><td>TIMESTAMPTZ</td><td>Server receive time.</td></tr>
+      </table>
+      <h4>Indexes</h4>
+      <ul>
+        <li><code>idx_heartbeats_user_time (user_id, time)</code> — fast windowed reads.</li>
+        <li><code>uniq_heartbeat (user_id, time, entity, type)</code> — dedupes CLI retries (INSERT … ON CONFLICT DO NOTHING).</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 7. API REFERENCE ==================== -->
+    <section>
+      <h2>7 · API reference</h2>
+      <h3>WakaTime-compatible (mounted at <code>/api/v1</code>)</h3>
+      <p>Authenticated by API key. <code>api_url</code> in the plugin config must therefore end in <code>/api/v1</code>.</p>
+      <table>
+        <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
+        <tr><td class="method m-post">POST</td><td>/users/current/heartbeats.bulk</td><td>Receive a batch of heartbeats.</td></tr>
+        <tr><td class="method m-post">POST</td><td>/users/current/heartbeats</td><td>Receive a single heartbeat or array.</td></tr>
+        <tr><td class="method m-post">POST</td><td>/users/:user/heartbeats[.bulk]</td><td>Same, alternate user-scoped form.</td></tr>
+        <tr><td class="method m-get">GET</td><td>/users/current/statusbar/today</td><td>Today's total for the editor status bar.</td></tr>
+      </table>
+      <h3>Account (<code>/api/account</code>)</h3>
+      <table>
+        <tr><th>Method</th><th>Path</th><th>Auth</th><th>Purpose</th></tr>
+        <tr><td class="method m-post">POST</td><td>/signup</td><td>—</td><td>Create account, set session, return API key.</td></tr>
+        <tr><td class="method m-post">POST</td><td>/login</td><td>—</td><td>Email or username + password.</td></tr>
+        <tr><td class="method m-post">POST</td><td>/logout</td><td>cookie</td><td>Clear session.</td></tr>
+        <tr><td class="method m-get">GET</td><td>/me</td><td>cookie</td><td>Current user + API key.</td></tr>
+        <tr><td class="method m-post">POST</td><td>/regenerate-key</td><td>cookie</td><td>Rotate the API key.</td></tr>
+      </table>
+      <h3>Stats (<code>/api</code>)</h3>
+      <table>
+        <tr><th>Method</th><th>Path</th><th>Auth</th><th>Purpose</th></tr>
+        <tr><td class="method m-get">GET</td><td>/stats?range=today|week|month</td><td>cookie</td><td>Totals, daily series &amp; breakdowns.</td></tr>
+        <tr><td class="method m-get">GET</td><td>/healthz</td><td>—</td><td>Liveness + DB check.</td></tr>
+      </table>
+      <h4>Auth header (from wakatime-cli)</h4>
+      <pre>Authorization: Basic base64(api_key)</pre>
+      <p>Trackam also accepts <code>Bearer &lt;key&gt;</code> and an <code>?api_key=</code> query param, and strips a trailing colon from the decoded Basic value.</p>
+    </section>
+
+    <!-- ==================== 8. ALGORITHM ==================== -->
+    <section>
+      <h2>8 · The coding-time algorithm</h2>
+      <p>
+        Coding time is derived from raw heartbeats the way WakaTime does it. Heartbeats are
+        sorted by time; the gap between each consecutive pair is added to the total <b>only if</b>
+        it is below a configurable timeout (<code>HEARTBEAT_TIMEOUT_SECONDS</code>, default
+        <b>900s / 15 min</b>). Larger gaps are treated as a break between sessions, so idle time
+        is not counted. Each interval is attributed to the project / language / editor / OS of
+        the heartbeat that <i>starts</i> it.
+      </p>
+      <pre><span class="k">for</span> i in 1..n:
+    delta = t[i] - t[i-1]
+    <span class="k">if</span> 0 &lt; delta &lt; timeout:
+        total += delta
+        attribute delta to project/language/editor/os of heartbeat[i-1]</pre>
+      <p>
+        The implementation lives in <code>src/utils/duration.ts</code>. Per-day series are
+        produced by bucketing heartbeats into local-day groups and running the same routine per
+        day. Editor and OS are inferred from the <code>User-Agent</code> string when the plugin
+        doesn't send them explicitly (<code>src/utils/useragent.ts</code>).
+      </p>
+      <div class="callout">
+        This on-read approach is simple and accurate for MVP volumes. At larger scale, add a
+        nightly pre-aggregation (daily summaries table) to keep dashboard queries fast.
+      </div>
+    </section>
+
+    <!-- ==================== 9. AUTH & SECURITY ==================== -->
+    <section>
+      <h2>9 · Authentication &amp; security</h2>
+      <h3>Two auth paths</h3>
+      <ul>
+        <li><b>Dashboard:</b> bcrypt-hashed passwords; on login a JWT is signed with <code>JWT_SECRET</code> and stored in an <code>httpOnly</code> cookie (<code>trackam_session</code>, 30-day expiry, <code>secure</code> in production, <code>SameSite=Lax</code>).</li>
+        <li><b>Ingestion:</b> per-user UUID API key sent via HTTP Basic, validated for UUID shape before a DB lookup.</li>
+      </ul>
+      <h3>Current safeguards</h3>
+      <ul>
+        <li>Parameterized SQL everywhere (no string interpolation).</li>
+        <li>HTML escaping in the dashboard render path.</li>
+        <li>Input validation on signup (email/username/password rules).</li>
+        <li>Unique constraints surface friendly 409s instead of leaking DB errors.</li>
+      </ul>
+      <div class="warn">
+        <b>Hardening TODO before scale / public hosting:</b>
+        set a strong <code>JWT_SECRET</code> (the app warns if the insecure default is used);
+        add rate limiting on auth + ingestion; consider hashing API keys at rest; add CSRF
+        protection if any cookie-authed state-changing endpoints are exposed cross-site; put
+        the service behind TLS (reverse proxy).
+      </div>
+    </section>
+
+    <!-- ==================== 10. FRONTEND ==================== -->
+    <section>
+      <h2>10 · Frontend &amp; design system</h2>
+      <p>
+        The dashboard is a single static page (<code>public/index.html</code> + <code>public/app.js</code>)
+        that talks to the JSON API. The visual language is intentionally <b>neo-brutalist and
+        playful</b> — thick black borders, hard offset shadows, chunky rounded cards, animated
+        background blobs, rainbow data bars, and Naija-flavoured microcopy — so it does not feel
+        like a generic SaaS dashboard.
+      </p>
+      <h3>Brand palette</h3>
+      <table>
+        <tr><th>Colour</th><th>Hex</th><th>Usage</th></tr>
+        <tr><td><span class="swatch" style="background:#0a0a0a"></span>Near black</td><td>#0A0A0A</td><td>Text, borders, shadows.</td></tr>
+        <tr><td><span class="swatch" style="background:#e8642f"></span>Vivid orange</td><td>#E8642F</td><td>Accent / range state.</td></tr>
+        <tr><td><span class="swatch" style="background:#ff1097"></span>Hot pink</td><td>#FF1097</td><td>Primary CTA / logo.</td></tr>
+        <tr><td><span class="swatch" style="background:#fecdec"></span>Soft pink</td><td>#FECDEC</td><td>Card fill.</td></tr>
+        <tr><td><span class="swatch" style="background:#9ce404"></span>Lime green</td><td>#9CE404</td><td>Success / stat card.</td></tr>
+        <tr><td><span class="swatch" style="background:#feffb2"></span>Pale yellow</td><td>#FEFFB2</td><td>Page canvas.</td></tr>
+        <tr><td><span class="swatch" style="background:#eed6ff"></span>Pale lavender</td><td>#EED6FF</td><td>Card fill.</td></tr>
+        <tr><td><span class="swatch" style="background:#ecceff"></span>Light lavender</td><td>#ECCEFF</td><td>Inputs.</td></tr>
+        <tr><td><span class="swatch" style="background:#9800ff"></span>Electric violet</td><td>#9800FF</td><td>Secondary CTA / links.</td></tr>
+        <tr><td><span class="swatch" style="background:#5900c0"></span>Deep purple</td><td>#5900C0</td><td>Accents.</td></tr>
+        <tr><td><span class="swatch" style="background:#e0e0e0"></span>Light grey</td><td>#E0E0E0</td><td>Tracks / dividers.</td></tr>
+      </table>
+      <p><b>Type:</b> Bricolage Grotesque (display) + Space Grotesk (body).
+        <b>Motion:</b> springy bar growth, press/translate on buttons, hover card-pop, floating blobs, logo wiggle.</p>
+      <div class="warn">
+        Tailwind is loaded via the Play CDN for MVP speed. Before production, switch to a
+        compiled Tailwind build (smaller, faster, no runtime CDN dependency).
+      </div>
+    </section>
+
+    <!-- ==================== 11. CONFIG ==================== -->
+    <section>
+      <h2>11 · Configuration (environment variables)</h2>
+      <table>
+        <tr><th>Variable</th><th>Default</th><th>Description</th></tr>
+        <tr><td>PORT</td><td>3000</td><td>HTTP port.</td></tr>
+        <tr><td>NODE_ENV</td><td>development</td><td>Toggles secure cookies + warnings.</td></tr>
+        <tr><td>BASE_URL</td><td>http://localhost:3000</td><td>Public URL (no trailing slash).</td></tr>
+        <tr><td>DATABASE_URL</td><td>postgres://trackam:trackam@localhost:5432/trackam</td><td>Postgres connection string.</td></tr>
+        <tr><td>JWT_SECRET</td><td>— (required)</td><td>Signs dashboard session cookies.</td></tr>
+        <tr><td>HEARTBEAT_TIMEOUT_SECONDS</td><td>900</td><td>Max gap counted as continuous coding.</td></tr>
+      </table>
+      <p>A template is provided in <code>.env.example</code>; copy it to <code>.env</code>.</p>
+    </section>
+
+    <!-- ==================== 12. LOCAL DEV ==================== -->
+    <section>
+      <h2>12 · Local development</h2>
+      <pre><span class="c"># Requires Node 18+ and a running PostgreSQL</span>
+npm install
+cp .env.example .env          <span class="c"># set DATABASE_URL + JWT_SECRET</span>
+npm run migrate               <span class="c"># create tables</span>
+npm run dev                   <span class="c"># http://localhost:3000 (hot reload)</span></pre>
+      <p>Then sign up in the dashboard and copy the generated <code>~/.wakatime.cfg</code> snippet into your editor's WakaTime config.</p>
+    </section>
+
+    <!-- ==================== 13. DEPLOYMENT ==================== -->
+    <section>
+      <h2>13 · Deployment</h2>
+      <p>Designed for a single cheap VPS (≈1 vCPU / 1 GB RAM). Docker Compose starts three services: <code>db</code> (Postgres), a one-shot <code>migrate</code> job, and the <code>app</code>.</p>
+      <pre>cp .env.example .env          <span class="c"># set a strong JWT_SECRET + BASE_URL</span>
+docker compose up -d --build
+<span class="c"># dashboard on http://your-host:3000</span></pre>
+      <h4>Recommended production additions</h4>
+      <ul>
+        <li>Reverse proxy (Caddy/Nginx) for TLS + gzip; Caddy gives automatic HTTPS.</li>
+        <li>Automated Postgres backups (e.g. nightly <code>pg_dump</code> to object storage).</li>
+        <li>Uptime monitoring against <code>/healthz</code>.</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 14. REPO STRUCTURE ==================== -->
+    <section>
+      <h2>14 · Repository &amp; project structure</h2>
+      <p><b>Remote:</b> <a href="https://github.com/OutstandingVick/trackam">github.com/OutstandingVick/trackam</a> · branch <code>main</code>.
+         Notable commits: initial MVP, then a neo-brutalist frontend redesign.</p>
+      <pre>src/
+  index.ts            <span class="c"># Express app + wiring</span>
+  config.ts           <span class="c"># Env config</span>
+  db.ts               <span class="c"># Postgres pool + type parsers</span>
+  migrate.ts          <span class="c"># Runs db/schema.sql</span>
+  auth.ts             <span class="c"># Password/session + API-key auth</span>
+  smoke.ts            <span class="c"># Core-logic tests</span>
+  routes/
+    wakatime.ts       <span class="c"># WakaTime-compatible ingestion + statusbar</span>
+    account.ts        <span class="c"># Signup / login / API key</span>
+    stats.ts          <span class="c"># Dashboard stats API</span>
+  utils/
+    duration.ts       <span class="c"># Heartbeat → coding-time algorithm</span>
+    useragent.ts      <span class="c"># Parse editor/OS from User-Agent</span>
+public/               <span class="c"># Dashboard (index.html + app.js)</span>
+db/schema.sql         <span class="c"># Database schema</span>
+Dockerfile · docker-compose.yml · .env.example · README.md</pre>
+    </section>
+
+    <!-- ==================== 15. TESTING ==================== -->
+    <section>
+      <h2>15 · Testing &amp; verification status</h2>
+      <table>
+        <tr><th>Area</th><th>Status</th><th>Notes</th></tr>
+        <tr><td>TypeScript build</td><td>✅ Passing</td><td><code>npm run build</code> compiles cleanly.</td></tr>
+        <tr><td>Core logic (duration + UA parse)</td><td>✅ Passing</td><td>Smoke checks: continuous session, idle-gap split, multi-project attribution, UA parsing.</td></tr>
+        <tr><td>Frontend render</td><td>✅ Verified</td><td>Auth + dashboard rendered live in a browser.</td></tr>
+        <tr><td>Full DB-backed HTTP flow</td><td>⚠ Not yet run</td><td>No Postgres available in the build sandbox; run locally via Docker Compose to verify ingestion end-to-end.</td></tr>
+        <tr><td>Automated integration tests</td><td>✗ TODO</td><td>Add supertest-based API tests + a seeded Postgres in CI.</td></tr>
+      </table>
+    </section>
+
+    <!-- ==================== 16. LIMITATIONS ==================== -->
+    <section>
+      <h2>16 · Known limitations</h2>
+      <ul>
+        <li>Durations are computed on every request; no pre-aggregation yet (fine at MVP scale).</li>
+        <li>Tailwind via CDN, not a compiled build.</li>
+        <li>No rate limiting on auth or ingestion endpoints.</li>
+        <li>API keys stored in plaintext (UUIDs) rather than hashed.</li>
+        <li>No email verification / password reset flow.</li>
+        <li>Day bucketing uses server local time, not per-user timezone.</li>
+        <li>No teams, leaderboards, badges, or payments yet (see roadmap).</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 17. ROADMAP ==================== -->
+    <section>
+      <h2>17 · Roadmap &amp; monetization</h2>
+      <h3>Near-term features</h3>
+      <ul>
+        <li><b>Private leaderboards</b> — high value for Nigerian dev communities &amp; bootcamps.</li>
+        <li><b>GitHub README time badges</b> — free organic marketing.</li>
+        <li><b>Weekly email summaries</b>.</li>
+        <li>Per-user timezones and goals.</li>
+      </ul>
+      <h3>Monetization (deferred)</h3>
+      <p>
+        Core stays free/open-source. An optional hosted tier priced in naira via <b>Paystack</b>
+        (cards, bank transfer, USSD) — e.g. ₦1,000–2,000/month — can fund free hosting for those
+        who self-host-averse, without paywalling history.
+      </p>
+      <h3>Scale hardening</h3>
+      <ul>
+        <li>Daily summary aggregation table + background job.</li>
+        <li>Rate limiting, API-key hashing, CI integration tests.</li>
+        <li>Compiled Tailwind build; optional multi-region.</li>
+      </ul>
+    </section>
+
+    <!-- ==================== 18. ONBOARDING ==================== -->
+    <section>
+      <h2>18 · Onboarding checklist for a new developer</h2>
+      <ol>
+        <li>Clone <code>github.com/OutstandingVick/trackam</code>.</li>
+        <li><code>npm install</code>; copy <code>.env.example</code> → <code>.env</code> and set <code>JWT_SECRET</code> + <code>DATABASE_URL</code>.</li>
+        <li>Start Postgres (local or <code>docker compose up db</code>), then <code>npm run migrate</code>.</li>
+        <li><code>npm run dev</code>; open the dashboard and sign up.</li>
+        <li>Point a real editor's WakaTime plugin at <code>http://localhost:3000/api/v1</code> using your API key, code for a minute, and confirm heartbeats appear.</li>
+        <li>Read <code>src/routes/wakatime.ts</code> (ingestion) and <code>src/utils/duration.ts</code> (the algorithm) first — they are the heart of the system.</li>
+        <li>Run <code>npm test</code> before pushing.</li>
+      </ol>
+      <p class="footer-note">
+        Trackam · self-hosted, WakaTime-compatible coding time tracking · built for African
+        developers · this handoff generated 20 July 2026.
+      </p>
+    </section>
+  </body>
+</html>

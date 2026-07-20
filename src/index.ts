@@ -34,10 +34,15 @@ app.use("/api/v1", wakatimeRouter);
 app.use("/api/account", accountRouter);
 app.use("/api", statsRouter);
 
-// Static frontend.
+// The dashboard app (auth + stats) lives at /app; "/" is the marketing site.
+app.get(["/app", "/app/*"], (_req, res) => {
+  res.sendFile(join(publicDir, "app.html"));
+});
+
+// Static frontend (landing page + assets).
 app.use(express.static(publicDir));
 
-// SPA-style fallback to the dashboard shell for unknown non-API GETs.
+// Fallback to the marketing landing page for unknown non-API GETs.
 app.get(/^\/(?!api|healthz).*/, (_req, res) => {
   res.sendFile(join(publicDir, "index.html"));
 });
