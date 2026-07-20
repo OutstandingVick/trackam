@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-trackam}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-trackam}
+      POSTGRES_DB: ${POSTGRES_DB:-trackam}
+    volumes:
+      - trackam_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-trackam}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    command: node dist/migrate.js
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-trackam}:${POSTGRES_PASSWORD:-trackam}@db:5432/${POSTGRES_DB:-trackam}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      BASE_URL: ${BASE_URL:-http://localhost:3000}
+      DATABASE_URL: postgres://${POSTGRES_USER:-trackam}:${POSTGRES_PASSWORD:-trackam}@db:5432/${POSTGRES_DB:-trackam}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in your .env}
+      HEARTBEAT_TIMEOUT_SECONDS: ${HEARTBEAT_TIMEOUT_SECONDS:-900}
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  trackam_pgdata:
