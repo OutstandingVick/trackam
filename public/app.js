@@ -6,6 +6,10 @@ const state = {
   range: "today",
 };
 
+// Fun rotating palette (from the brand colours) for bars & chart columns.
+const PALETTE = ["#FF1097", "#9800FF", "#9CE404", "#E8642F", "#5900C0", "#FECDEC"];
+const colorAt = (i) => PALETTE[i % PALETTE.length];
+
 async function api(path, options = {}) {
   const res = await fetch(path, {
     headers: { "Content-Type": "application/json" },
@@ -23,7 +27,7 @@ async function api(path, options = {}) {
 
 function showAuthError(msg) {
   const el = $("#auth-error");
-  el.textContent = msg;
+  el.textContent = "⚠️ " + msg;
   el.classList.remove("hidden");
 }
 
@@ -35,12 +39,16 @@ function switchTab(tab) {
   const isLogin = tab === "login";
   $("#login-form").classList.toggle("hidden", !isLogin);
   $("#signup-form").classList.toggle("hidden", isLogin);
-  $("#tab-login").classList.toggle("bg-brand-600", isLogin);
-  $("#tab-login").classList.toggle("text-white", isLogin);
-  $("#tab-login").classList.toggle("text-slate-300", !isLogin);
-  $("#tab-signup").classList.toggle("bg-brand-600", !isLogin);
-  $("#tab-signup").classList.toggle("text-white", !isLogin);
-  $("#tab-signup").classList.toggle("text-slate-300", isLogin);
+
+  const login = $("#tab-login");
+  const signup = $("#tab-signup");
+  // active tab = lime with hard shadow; inactive = white
+  login.classList.toggle("bg-lime", isLogin);
+  login.classList.toggle("shadow-hardsm", isLogin);
+  login.classList.toggle("bg-white", !isLogin);
+  signup.classList.toggle("bg-lime", !isLogin);
+  signup.classList.toggle("shadow-hardsm", !isLogin);
+  signup.classList.toggle("bg-white", isLogin);
   clearAuthError();
 }
 
@@ -96,12 +104,20 @@ function setView(view) {
   $("#dashboard-view").classList.toggle("hidden", view !== "dashboard");
 }
 
+const RANGE_COLORS = { today: "bg-pink text-white", week: "bg-violet text-white", month: "bg-orange text-white" };
+
 function paintRangeButtons() {
   $$(".range-btn").forEach((btn) => {
     const active = btn.dataset.range === state.range;
-    btn.classList.toggle("bg-brand-600", active);
-    btn.classList.toggle("text-white", active);
-    btn.classList.toggle("text-slate-400", !active);
+    // reset
+    btn.classList.remove(
+      "bg-pink", "bg-violet", "bg-orange", "text-white", "bg-white"
+    );
+    if (active) {
+      RANGE_COLORS[btn.dataset.range].split(" ").forEach((c) => btn.classList.add(c));
+    } else {
+      btn.classList.add("bg-white");
+    }
   });
 }
 
@@ -118,20 +134,20 @@ function renderBreakdown(containerId, items) {
   container.innerHTML = "";
   if (!items || items.length === 0) {
     container.innerHTML =
-      '<p class="text-sm text-slate-600">No data yet.</p>';
+      '<p class="text-sm font-medium text-ink/40">Nothing here yet — go write some code! 😎</p>';
     return;
   }
   const max = items[0].total_seconds || 1;
-  items.slice(0, 8).forEach((item) => {
-    const pct = Math.max(2, Math.round((item.total_seconds / max) * 100));
+  items.slice(0, 8).forEach((item, i) => {
+    const pct = Math.max(4, Math.round((item.total_seconds / max) * 100));
     const row = document.createElement("div");
     row.innerHTML = `
-      <div class="flex justify-between text-sm mb-1">
-        <span class="text-slate-300 truncate pr-2">${escapeHtml(item.name)}</span>
-        <span class="text-slate-500 shrink-0">${escapeHtml(item.text)}</span>
+      <div class="flex justify-between text-sm mb-1.5">
+        <span class="font-bold truncate pr-2">${escapeHtml(item.name)}</span>
+        <span class="font-semibold text-ink/60 shrink-0">${escapeHtml(item.text)}</span>
       </div>
-      <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-        <div class="h-full bg-brand-500 rounded-full" style="width:${pct}%"></div>
+      <div class="h-3.5 bg-grey border-[2px] border-ink rounded-full overflow-hidden">
+        <div class="h-full rounded-full border-r-[2px] border-ink" style="width:${pct}%;background:${colorAt(i)}"></div>
       </div>`;
     container.appendChild(row);
   });
@@ -141,20 +157,20 @@ function renderChart(days) {
   const chart = $("#chart");
   chart.innerHTML = "";
   const max = Math.max(1, ...days.map((d) => d.total_seconds));
-  days.forEach((d) => {
-    const pct = Math.round((d.total_seconds / max) * 100);
+  days.forEach((d, i) => {
+    const pct = d.total_seconds > 0 ? Math.max(6, Math.round((d.total_seconds / max) * 100)) : 0;
     const col = document.createElement("div");
-    col.className = "flex-1 flex flex-col items-center justify-end gap-1 group";
+    col.className = "flex-1 flex flex-col items-center justify-end gap-1.5 group";
     const label = new Date(d.date + "T00:00:00").toLocaleDateString(undefined, {
       weekday: days.length <= 7 ? "short" : undefined,
       day: days.length > 7 ? "numeric" : undefined,
     });
     col.innerHTML = `
       <div class="w-full flex items-end justify-center h-32">
-        <div class="bar w-full max-w-[36px] rounded-t bg-brand-500/80 group-hover:bg-brand-400"
-             style="height:${pct}%" title="${escapeHtml(d.text)}"></div>
+        <div class="bar w-full max-w-[38px] rounded-t-lg border-[2px] border-ink group-hover:brightness-105"
+             style="height:${pct}%;background:${colorAt(i)}" title="${escapeHtml(d.text)}"></div>
       </div>
-      <span class="text-[10px] text-slate-500">${escapeHtml(label)}</span>`;
+      <span class="text-[10px] font-bold text-ink/50">${escapeHtml(label)}</span>`;
     chart.appendChild(col);
   });
 }
@@ -180,6 +196,7 @@ async function loadAccount() {
   const me = await api("/api/account/me");
   state.user = me;
   $("#nav-username").textContent = "@" + me.username;
+  $("#greet-name").textContent = me.username;
   const origin = window.location.origin;
   $("#config-snippet").textContent =
     `[settings]\napi_url = ${origin}/api/v1\napi_key = ${me.api_key}`;

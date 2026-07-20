@@ -1,140 +1,181 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trackam — Affordable coding time tracking</title>
+    <title>Trackam — track your coding grind</title>
     <meta
       name="description"
-      content="An affordable, WakaTime-compatible coding time tracker built for Nigerian developers."
+      content="An affordable, WakaTime-compatible coding time tracker built for African developers."
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
-        darkMode: "class",
         theme: {
           extend: {
             colors: {
-              brand: {
-                50: "#ecfdf3",
-                100: "#d1fae0",
-                400: "#34d399",
-                500: "#10b981",
-                600: "#059669",
-                700: "#047857",
-              },
+              ink: "#0A0A0A",
+              orange: "#E8642F",
+              pink: "#FF1097",
+              softpink: "#FECDEC",
+              lime: "#9CE404",
+              yellow: "#FEFFB2",
+              lavender: "#EED6FF",
+              lavender2: "#ECCEFF",
+              violet: "#9800FF",
+              purple: "#5900C0",
+              grey: "#E0E0E0",
             },
             fontFamily: {
-              sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+              display: ['"Bricolage Grotesque"', "system-ui", "sans-serif"],
+              sans: ['"Space Grotesk"', "system-ui", "sans-serif"],
+            },
+            boxShadow: {
+              hard: "5px 5px 0 0 #0A0A0A",
+              hardlg: "8px 8px 0 0 #0A0A0A",
+              hardsm: "3px 3px 0 0 #0A0A0A",
             },
           },
         },
       };
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <style>
       body {
-        font-family: "Inter", system-ui, sans-serif;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        background-color: #feffb2;
+        background-image: radial-gradient(#0a0a0a11 1.5px, transparent 1.5px);
+        background-size: 22px 22px;
       }
-      .bar {
-        transition: height 0.4s ease;
+      h1, h2, h3, .font-display {
+        font-family: "Bricolage Grotesque", system-ui, sans-serif;
       }
+      .blob {
+        position: fixed;
+        border-radius: 9999px;
+        filter: blur(8px);
+        opacity: 0.55;
+        z-index: 0;
+        pointer-events: none;
+        animation: float 9s ease-in-out infinite;
+      }
+      @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        50% { transform: translate(0, -26px) rotate(8deg); }
+      }
+      @keyframes wiggle {
+        0%, 100% { transform: rotate(-2deg); }
+        50% { transform: rotate(2deg); }
+      }
+      .wiggle:hover { animation: wiggle 0.4s ease-in-out; }
+      .press {
+        transition: transform 0.08s ease, box-shadow 0.08s ease;
+      }
+      .press:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 0 #0a0a0a; }
+      .press:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 0 #0a0a0a; }
+      .bar { transition: height 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+      .card-pop { transition: transform 0.12s ease, box-shadow 0.12s ease; }
+      .card-pop:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 #0a0a0a; }
+      ::selection { background: #ff1097; color: #fff; }
     </style>
   </head>
-  <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
+  <body class="text-ink min-h-screen antialiased selection:bg-pink">
+    <!-- decorative blobs -->
+    <div class="blob bg-pink" style="width:220px;height:220px;top:-60px;left:-40px;"></div>
+    <div class="blob bg-violet" style="width:180px;height:180px;bottom:40px;right:-30px;animation-delay:-3s;"></div>
+    <div class="blob bg-lime" style="width:140px;height:140px;top:40%;left:-50px;animation-delay:-5s;"></div>
+
     <!-- ============ AUTH VIEW ============ -->
-    <div id="auth-view" class="hidden min-h-screen flex items-center justify-center px-4">
+    <div id="auth-view" class="hidden relative z-10 min-h-screen flex items-center justify-center px-4 py-10">
       <div class="w-full max-w-md">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-extrabold tracking-tight">
-            <span class="text-brand-500">Trackam</span>
-          </h1>
-          <p class="text-slate-400 mt-2 text-sm">
-            Affordable coding time tracking for African devs.
+          <div class="inline-block bg-pink text-white border-[3px] border-ink shadow-hard px-5 py-2 rounded-full -rotate-2 wiggle">
+            <span class="font-display font-extrabold text-2xl tracking-tight">Trackam</span>
+          </div>
+          <p class="mt-5 text-lg font-medium">
+            Track your coding grind. <span class="whitespace-nowrap">No wahala. 🇳🇬</span>
           </p>
+          <p class="text-sm text-ink/60 mt-1">Affordable, WakaTime-friendly time tracking.</p>
         </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div class="flex gap-2 mb-6 bg-slate-800/60 p-1 rounded-lg">
-            <button
-              id="tab-login"
-              class="flex-1 py-2 rounded-md text-sm font-medium bg-brand-600 text-white"
-            >
+        <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hardlg p-6">
+          <div class="grid grid-cols-2 gap-2 mb-6">
+            <button id="tab-login"
+              class="py-2.5 rounded-xl border-[3px] border-ink font-bold text-sm bg-lime shadow-hardsm">
               Log in
             </button>
-            <button
-              id="tab-signup"
-              class="flex-1 py-2 rounded-md text-sm font-medium text-slate-300"
-            >
+            <button id="tab-signup"
+              class="py-2.5 rounded-xl border-[3px] border-ink font-bold text-sm bg-white">
               Sign up
             </button>
           </div>
 
-          <p id="auth-error" class="hidden mb-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2"></p>
+          <p id="auth-error" class="hidden mb-4 text-sm font-semibold text-white bg-pink border-[3px] border-ink rounded-xl px-3 py-2 shadow-hardsm"></p>
 
           <!-- Login form -->
           <form id="login-form" class="space-y-4">
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Email or username</label>
+              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Email or username</label>
               <input name="login" type="text" required autocomplete="username"
-                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                class="w-full bg-yellow border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Password</label>
               <input name="password" type="password" required autocomplete="current-password"
-                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                class="w-full bg-yellow border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
             </div>
             <button type="submit"
-              class="w-full bg-brand-600 hover:bg-brand-500 transition text-white font-semibold py-2.5 rounded-lg text-sm">
-              Log in
+              class="press w-full bg-pink text-white border-[3px] border-ink shadow-hard font-display font-extrabold py-3 rounded-xl text-base">
+              Let's go →
             </button>
           </form>
 
           <!-- Signup form -->
           <form id="signup-form" class="space-y-4 hidden">
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Email</label>
+              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Email</label>
               <input name="email" type="email" required autocomplete="email"
-                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Username</label>
+              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Username</label>
               <input name="username" type="text" required autocomplete="username"
-                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-400 mb-1">Password</label>
+              <label class="block text-xs font-bold uppercase tracking-wide mb-1">Password</label>
               <input name="password" type="password" required minlength="8" autocomplete="new-password"
-                class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
-              <p class="text-[11px] text-slate-500 mt-1">At least 8 characters.</p>
+                class="w-full bg-lavender border-[3px] border-ink rounded-xl px-3 py-2.5 text-sm font-medium focus:outline-none focus:shadow-hardsm focus:-translate-y-0.5 transition" />
+              <p class="text-[11px] text-ink/50 mt-1 font-medium">Minimum 8 characters, make e strong. 💪</p>
             </div>
             <button type="submit"
-              class="w-full bg-brand-600 hover:bg-brand-500 transition text-white font-semibold py-2.5 rounded-lg text-sm">
-              Create account
+              class="press w-full bg-violet text-white border-[3px] border-ink shadow-hard font-display font-extrabold py-3 rounded-xl text-base">
+              Create my account 🚀
             </button>
           </form>
         </div>
-        <p class="text-center text-xs text-slate-600 mt-6">
-          Works with your existing WakaTime editor plugins.
+        <p class="text-center text-xs font-medium text-ink/50 mt-6">
+          Keeps your existing WakaTime editor plugin. Just point it here.
         </p>
       </div>
     </div>
 
     <!-- ============ DASHBOARD VIEW ============ -->
-    <div id="dashboard-view" class="hidden">
-      <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-10">
+    <div id="dashboard-view" class="hidden relative z-10">
+      <header class="border-b-[3px] border-ink bg-white sticky top-0 z-20">
         <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl font-extrabold text-brand-500">Trackam</span>
+            <span class="font-display font-extrabold text-2xl bg-pink text-white border-[3px] border-ink rounded-full px-3 py-0.5 -rotate-2">Trackam</span>
           </div>
-          <div class="flex items-center gap-4">
-            <span id="nav-username" class="text-sm text-slate-400"></span>
+          <div class="flex items-center gap-3">
+            <span id="nav-username" class="text-sm font-bold bg-lime border-[3px] border-ink rounded-full px-3 py-1 shadow-hardsm"></span>
             <button id="logout-btn"
-              class="text-sm text-slate-300 hover:text-white border border-slate-700 rounded-lg px-3 py-1.5">
+              class="press text-sm font-bold bg-white border-[3px] border-ink rounded-xl px-3 py-1.5 shadow-hardsm">
               Log out
             </button>
           </div>
@@ -142,83 +183,90 @@
       </header>
 
       <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        <!-- Range toggle -->
-        <div class="flex items-center justify-between flex-wrap gap-4">
-          <h2 class="text-2xl font-bold">Your coding activity</h2>
-          <div class="flex gap-1 bg-slate-800/60 p-1 rounded-lg text-sm">
-            <button data-range="today" class="range-btn px-4 py-1.5 rounded-md font-medium">Today</button>
-            <button data-range="week" class="range-btn px-4 py-1.5 rounded-md font-medium">7 days</button>
-            <button data-range="month" class="range-btn px-4 py-1.5 rounded-md font-medium">30 days</button>
+        <!-- Greeting + range toggle -->
+        <div class="flex items-end justify-between flex-wrap gap-4">
+          <div>
+            <h2 class="font-display font-extrabold text-4xl sm:text-5xl leading-none">
+              How far, <span id="greet-name" class="text-violet">dev</span>! 👋
+            </h2>
+            <p class="text-ink/60 font-medium mt-2">Here's your coding grind.</p>
+          </div>
+          <div class="flex gap-2 flex-wrap">
+            <button data-range="today" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">Today</button>
+            <button data-range="week" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">7 days</button>
+            <button data-range="month" class="range-btn press text-sm font-bold border-[3px] border-ink rounded-xl px-4 py-2 shadow-hardsm">30 days</button>
           </div>
         </div>
 
         <!-- Stat cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-xs uppercase tracking-wide text-slate-500">Total time</p>
-            <p id="stat-total" class="text-3xl font-extrabold mt-2 text-brand-400">—</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div class="card-pop bg-lime border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[-1deg]">
+            <p class="text-xs font-bold uppercase tracking-widest">⏱️ Total time</p>
+            <p id="stat-total" class="font-display font-extrabold text-4xl mt-3">—</p>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-xs uppercase tracking-wide text-slate-500">Daily average</p>
-            <p id="stat-average" class="text-3xl font-extrabold mt-2">—</p>
+          <div class="card-pop bg-softpink border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[1deg]">
+            <p class="text-xs font-bold uppercase tracking-widest">📊 Daily average</p>
+            <p id="stat-average" class="font-display font-extrabold text-4xl mt-3">—</p>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
-            <p class="text-xs uppercase tracking-wide text-slate-500">Heartbeats</p>
-            <p id="stat-heartbeats" class="text-3xl font-extrabold mt-2">—</p>
+          <div class="card-pop bg-lavender border-[3px] border-ink rounded-3xl shadow-hard p-6 rotate-[-1deg]">
+            <p class="text-xs font-bold uppercase tracking-widest">💓 Heartbeats</p>
+            <p id="stat-heartbeats" class="font-display font-extrabold text-4xl mt-3">—</p>
           </div>
         </div>
 
         <!-- Daily chart -->
-        <div id="chart-card" class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <p class="text-sm font-semibold mb-4 text-slate-300">Daily breakdown</p>
-          <div id="chart" class="flex items-end gap-2 h-40"></div>
+        <div id="chart-card" class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+          <p class="font-display font-bold text-lg mb-5">📈 Daily breakdown</p>
+          <div id="chart" class="flex items-end gap-2 h-44"></div>
         </div>
 
         <!-- Breakdowns -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <p class="text-sm font-semibold mb-4 text-slate-300">Projects</p>
-            <div id="projects-list" class="space-y-3"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <p class="font-display font-bold text-lg mb-4">🗂️ Projects</p>
+            <div id="projects-list" class="space-y-4"></div>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <p class="text-sm font-semibold mb-4 text-slate-300">Languages</p>
-            <div id="languages-list" class="space-y-3"></div>
+          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <p class="font-display font-bold text-lg mb-4">🧑‍💻 Languages</p>
+            <div id="languages-list" class="space-y-4"></div>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <p class="text-sm font-semibold mb-4 text-slate-300">Editors</p>
-            <div id="editors-list" class="space-y-3"></div>
+          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <p class="font-display font-bold text-lg mb-4">✏️ Editors</p>
+            <div id="editors-list" class="space-y-4"></div>
           </div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-            <p class="text-sm font-semibold mb-4 text-slate-300">Operating systems</p>
-            <div id="os-list" class="space-y-3"></div>
+          <div class="bg-white border-[3px] border-ink rounded-3xl shadow-hard p-6">
+            <p class="font-display font-bold text-lg mb-4">💻 Operating systems</p>
+            <div id="os-list" class="space-y-4"></div>
           </div>
         </div>
 
         <!-- Setup / API key -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
-          <p class="text-sm font-semibold mb-2 text-slate-300">Connect your editor</p>
-          <p class="text-sm text-slate-400 mb-4">
-            Install the official WakaTime plugin for your editor, then add this to
-            <code class="text-brand-400">~/.wakatime.cfg</code>:
+        <div class="bg-violet text-white border-[3px] border-ink rounded-3xl shadow-hardlg p-6 sm:p-8">
+          <p class="font-display font-extrabold text-2xl mb-2">🔌 Connect your editor</p>
+          <p class="text-white/80 font-medium mb-5 max-w-2xl">
+            Install the official <b>WakaTime</b> plugin, then drop this into
+            <code class="bg-white/20 rounded px-1.5 py-0.5">~/.wakatime.cfg</code>. That's the whole setup.
           </p>
-          <pre class="bg-slate-950 border border-slate-800 rounded-lg p-4 text-xs overflow-x-auto text-slate-300"><code id="config-snippet">[settings]
+          <pre class="bg-ink text-lime border-[3px] border-ink rounded-2xl p-4 text-xs sm:text-sm overflow-x-auto shadow-hardsm"><code id="config-snippet">[settings]
 api_url = ...
 api_key = ...</code></pre>
-          <div class="flex items-center gap-3 mt-4">
+          <div class="flex items-center gap-3 mt-5 flex-wrap">
             <button id="copy-config"
-              class="text-sm bg-brand-600 hover:bg-brand-500 transition text-white font-medium px-4 py-2 rounded-lg">
+              class="press bg-lime text-ink border-[3px] border-ink rounded-xl px-5 py-2.5 font-bold shadow-hard">
               Copy config
             </button>
             <button id="regenerate-key"
-              class="text-sm text-slate-300 hover:text-white border border-slate-700 rounded-lg px-4 py-2">
-              Regenerate API key
+              class="press bg-white text-ink border-[3px] border-ink rounded-xl px-5 py-2.5 font-bold shadow-hard">
+              🔄 New API key
             </button>
-            <span id="copy-feedback" class="text-xs text-brand-400 hidden">Copied!</span>
+            <span id="copy-feedback" class="hidden bg-pink text-white border-[3px] border-ink rounded-full px-3 py-1 text-xs font-bold shadow-hardsm">Copied! ✨</span>
           </div>
         </div>
       </main>
-      <footer class="max-w-6xl mx-auto px-4 py-8 text-center text-xs text-slate-600">
-        Trackam · self-hosted, WakaTime-compatible · built for African developers
+      <footer class="max-w-6xl mx-auto px-4 py-10 text-center">
+        <span class="inline-block text-xs font-bold bg-ink text-yellow rounded-full px-4 py-1.5 -rotate-1">
+          Trackam · self-hosted · built for African devs 🌍
+        </span>
       </footer>
     </div>
 
