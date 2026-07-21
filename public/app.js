@@ -4,6 +4,7 @@ const $$ = (sel) => document.querySelectorAll(sel);
 const state = {
   user: null,
   range: "today",
+  view: "dashboard",
 };
 
 // Fun rotating palette (from the brand colours) for bars & chart columns.
@@ -129,6 +130,58 @@ $$(".range-btn").forEach((btn) => {
   });
 });
 
+/* ---------------- Sidebar / panel switching ---------------- */
+
+const PANEL_IDS = ["dashboard", "leaderboard", "projects", "settings"];
+
+function paintNav() {
+  $$(".nav-item").forEach((btn) => {
+    const active = btn.dataset.view === state.view;
+    const activeClasses = (btn.dataset.active || "bg-lime text-ink").split(" ");
+    // Reset all possible active classes on every item first.
+    btn.classList.remove(
+      "bg-lime", "bg-pink", "bg-violet", "bg-orange",
+      "text-ink", "text-white", "border-ink", "shadow-hardsm"
+    );
+    btn.classList.add("border-transparent", "text-ink/70");
+    if (active) {
+      btn.classList.remove("border-transparent", "text-ink/70");
+      btn.classList.add("border-ink", "shadow-hardsm", ...activeClasses);
+    }
+  });
+}
+
+function showPanel(view) {
+  state.view = view;
+  PANEL_IDS.forEach((id) => {
+    const el = document.getElementById(`view-${id}`);
+    if (el) el.classList.toggle("hidden", id !== view);
+  });
+  paintNav();
+  closeMobileMenu();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+$$(".nav-item").forEach((btn) => {
+  btn.addEventListener("click", () => showPanel(btn.dataset.view));
+});
+
+/* ---------------- Mobile sidebar toggle ---------------- */
+
+function openMobileMenu() {
+  $("#sidebar").classList.remove("-translate-x-full");
+  $("#sidebar-backdrop").classList.remove("hidden");
+}
+function closeMobileMenu() {
+  // Only affects mobile; on md+ the sidebar stays translate-x-0 via md: variant.
+  $("#sidebar").classList.add("-translate-x-full");
+  $("#sidebar-backdrop").classList.add("hidden");
+}
+const menuToggle = document.getElementById("menu-toggle");
+if (menuToggle) menuToggle.addEventListener("click", openMobileMenu);
+const menuBackdrop = document.getElementById("sidebar-backdrop");
+if (menuBackdrop) menuBackdrop.addEventListener("click", closeMobileMenu);
+
 function renderBreakdown(containerId, items) {
   const container = $(containerId);
   container.innerHTML = "";
@@ -197,6 +250,8 @@ async function loadAccount() {
   state.user = me;
   $("#nav-username").textContent = "@" + me.username;
   $("#greet-name").textContent = me.username;
+  const avatar = $("#user-avatar");
+  if (avatar) avatar.textContent = (me.username || "?")[0].toUpperCase();
   const origin = window.location.origin;
   $("#config-snippet").textContent =
     `[settings]\napi_url = ${origin}/api/v1\napi_key = ${me.api_key}`;
@@ -234,9 +289,22 @@ function escapeHtml(str) {
 /* ---------------- Boot ---------------- */
 
 async function boot() {
+  // Design/preview mode: skip auth and render the dashboard shell with
+  // placeholder data. Handy for iterating on layout without a DB.
+  if (new URLSearchParams(window.location.search).has("preview")) {
+    state.user = { username: "preview" };
+    $("#nav-username").textContent = "@preview";
+    $("#greet-name").textContent = "preview";
+    $("#user-avatar").textContent = "P";
+    setView("dashboard");
+    showPanel(state.view);
+    paintRangeButtons();
+    return;
+  }
   try {
     await loadAccount();
     setView("dashboard");
+    showPanel(state.view);
     paintRangeButtons();
     await loadStats();
   } catch {
